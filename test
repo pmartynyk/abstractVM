@@ -1,0 +1,12 @@
+pop
+dump
+add
+
+sub
+mul;r
+div
+mod
+print
+exit
+;sdfsfsdf
+push int8(-15.15)
