@@ -5,11 +5,23 @@
 #include <iostream>
 #include <fstream>
 #include <regex>
+#include "IOperand.hpp"
+#include "Exceptions.class.hpp"
+#include "Operand.class.hpp"
+#include "Regular.hpp"
+#include "Command.class.hpp"
 
 class Main
 {
 private:
     std::list<std::string> _input;
+    bool isExit;
+    std::list<IOperand *> _stack;
+    Command _cmd;
+
+    std::string ltrim(const std::string &s);
+    std::string rtrim(const std::string &s);
+    std::string trim(const std::string &s);
 
 public:
     Main(void);
@@ -22,9 +34,7 @@ public:
 
     bool validateInput(void);
 
-    std::string ltrim(const std::string &s);
-    std::string rtrim(const std::string &s);
-    std::string trim(const std::string &s);
+    void calculate(void);
 
-    void outInput(void);
+    // void outInput(void);
 };

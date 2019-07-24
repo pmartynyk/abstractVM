@@ -1,5 +1,6 @@
 
 #include "Main.class.hpp"
+#include "Operand.class.hpp"
 
 Main::Main(void)
 {
@@ -14,13 +15,18 @@ Main &Main::operator=(Main const &val)
 {
     if (this != &val)
     {
-        *this = val;
+        this->_input = val._input;
+        this->isExit = val.isExit;
     }
     return *this;
 }
 
 Main::~Main(void)
 {
+    std::list<IOperand *>::const_iterator it;
+    std::list<IOperand *>::const_iterator ite = this->_stack.end();
+    for (it = this->_stack.begin(); it != ite; ++it)
+        delete *it;
 }
 
 void Main::readFromInput(void)
@@ -35,7 +41,7 @@ void Main::readFromFile(char *file)
 
     fs.open(file);
     if (!fs.is_open())
-        std::cout << "Exception" << std::endl;
+        throw Exceptions::CanNotOpenFile(file);
     for (std::string line; std::getline(fs, line);)
         this->_input.push_back(this->trim(line));
     fs.close();
@@ -43,32 +49,71 @@ void Main::readFromFile(char *file)
 
 bool Main::validateInput(void)
 {
-    std::regex checkCmd("[[:s:]]*(pop|dump|add|sub|mul|div|mod|print|exit)[[:s:]]*(;[[:w:]]*|[]{0,0})");
-    std::regex checkCmdWithValue("[[:s:]]*(push|assert)[[:s:]]+(int8|int16|int32|float|double)[(]([-+]?)([[:d:]]+|[[:d:]]+.[[:d:]]+)[)][[:s:]]*(;.*|[]{0,0})");
-    std::regex checkComment("[[:s:]]*;[[:w:]]*[[:s:]]*");
-    std::regex checkEmpty("[[:s:]]*");
+    std::regex checkCmd(CMD);
+    std::regex checkCmdWithValue(CMD_VAL);
+    std::regex checkComment(CMT);
+    std::regex checkEmpty(EMPTY);
+    std::regex checkExit(EXIT);
+    bool res = true;
+    int line = 1;
 
     std::list<std::string>::const_iterator it;
     std::list<std::string>::const_iterator ite = this->_input.end();
     for (it = this->_input.begin(); it != ite; ++it)
     {
-        std::cout << *it << std::endl;
-        if (!std::regex_match(*it, checkCmd) &&
-            !std::regex_match(*it, checkCmdWithValue) &&
-            !std::regex_match(*it, checkComment) &&
-            !std::regex_match(*it, checkEmpty))
-            return false;
+        // std::cout << *it << std::endl;
+        try
+        {
+            if (!std::regex_match(*it, checkCmd) &&
+                !std::regex_match(*it, checkCmdWithValue) &&
+                !std::regex_match(*it, checkComment) &&
+                !std::regex_match(*it, checkEmpty))
+            {
+                res = false;
+                throw Exceptions::SyntaxError(line, *it);
+            }
+        }
+        catch (const Exceptions::SyntaxError &e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+        if (std::regex_match(*it, checkExit))
+            this->isExit = true;
+        line++;
     }
-    return true;
+    if (this->isExit == false)
+        throw Exceptions::NoExitCommand();
+    return res;
 }
 
-void Main::outInput(void)
+void Main::calculate(void)
 {
+    std::regex checkCmd(CMD);
+    std::regex checkCmdWithValue(CMD_VAL);
+
     std::list<std::string>::const_iterator it;
     std::list<std::string>::const_iterator ite = this->_input.end();
     for (it = this->_input.begin(); it != ite; ++it)
-        std::cout << *it << std::endl;
+    {
+        if (std::regex_match(*it, checkCmd) || std::regex_match(*it, checkCmdWithValue))
+        {
+               this->_cmd.executeCommand(*this, *it);    
+        }
+    }
+
+    // std::list<IOperand *>::const_iterator it1;
+    // std::list<IOperand *>::const_iterator ite1 = this->_stack.end();
+    // for (it1 = this->_stack.begin(); it1 != ite1; ++it1)
+    //     std::cout << *it1 << std::endl;
 }
+
+// void Main::outInput(void)
+// {
+//     std::list<std::string>::const_iterator it;
+//     std::list<std::string>::const_iterator ite = this->_input.end();
+//     for (it = this->_input.begin(); it != ite; ++it)
+//         std::cout << *it << std::endl;
+// }
 
 std::string Main::ltrim(const std::string &s)
 {

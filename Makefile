@@ -2,10 +2,15 @@
 NAME	= abstractVM
 
 LIBS	= IOperand.hpp\
-		Main.class.hpp
+		Main.class.hpp\
+		Exceptions.class.hpp\
+		Operand.class.hpp\
+		Command.class.hpp
 
 SRC		= main.cpp\
-		Main.class.cpp
+		Main.class.cpp\
+		Exceptions.class.cpp\
+		Command.class.cpp
 
 OBJ		= $(SRC:.cpp=.o)
 
@@ -14,10 +19,10 @@ FLAG	= -Wall -Wextra -Werror
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	clang++ $(FLAG) $^ -o $(NAME)
+	clang++ -std=c++11 $(FLAG) $(OBJ) -o $(NAME) 
 
-./%.o: ./%.cpp
-	clang++ $(FLAG) -c $< -o $@
+./%.o: ./%.cpp $(LIBS)
+	clang++ -std=c++11 $(FLAG) -c -o $@ $<
 
 clean:
 	/bin/rm -f *.o
