@@ -31,4 +31,24 @@ public:
     ~SyntaxError(void) throw();
     const char *what(void) const throw();
 };
+
+class OverflowError : std::exception
+{
+    std::string _error;
+
+public:
+    OverflowError(std::string const &str);
+    ~OverflowError(void) throw();
+    const char *what(void) const throw();
+};
+
+class UnderflowError : std::exception
+{
+    std::string _error;
+
+public:
+    UnderflowError(std::string const &str);
+    ~UnderflowError(void) throw();
+    const char *what(void) const throw();
+};
 } // namespace Exceptions

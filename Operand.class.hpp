@@ -4,6 +4,7 @@
 #include "IOperand.hpp"
 #include <typeinfo>
 #include <sstream>
+#include <string>
 
 template <typename T>
 class Operand : public IOperand
@@ -44,7 +45,7 @@ public:
         }
 
         if (this->_type != Float)
-            this->_str = toString(val);
+            this->_str = std::to_string(val);
         else
         {
             std::stringstream set;

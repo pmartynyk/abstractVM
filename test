@@ -1,7 +1,7 @@
-pop
-mod
-;dfdfdf
+push int8(1)
+push int8(10)
+push double(15.5)
+push float(15.5)
 dump
-push int16(15)
 ;fdfsd
 exit

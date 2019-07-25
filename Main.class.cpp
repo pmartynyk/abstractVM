@@ -4,6 +4,7 @@
 
 Main::Main(void)
 {
+    this->_cmdExit = false;
 }
 
 Main::Main(Main &val)
@@ -16,15 +17,15 @@ Main &Main::operator=(Main const &val)
     if (this != &val)
     {
         this->_input = val._input;
-        this->isExit = val.isExit;
+        this->_isExit = val._isExit;
     }
     return *this;
 }
 
 Main::~Main(void)
 {
-    std::list<IOperand *>::const_iterator it;
-    std::list<IOperand *>::const_iterator ite = this->_stack.end();
+    std::list<IOperand const *>::const_iterator it;
+    std::list<IOperand const *>::const_iterator ite = this->_stack.end();
     for (it = this->_stack.begin(); it != ite; ++it)
         delete *it;
 }
@@ -78,10 +79,10 @@ bool Main::validateInput(void)
             std::cerr << e.what() << '\n';
         }
         if (std::regex_match(*it, checkExit))
-            this->isExit = true;
+            this->_isExit = true;
         line++;
     }
-    if (this->isExit == false)
+    if (this->_isExit == false)
         throw Exceptions::NoExitCommand();
     return res;
 }
@@ -93,18 +94,18 @@ void Main::calculate(void)
 
     std::list<std::string>::const_iterator it;
     std::list<std::string>::const_iterator ite = this->_input.end();
-    for (it = this->_input.begin(); it != ite; ++it)
+    for (it = this->_input.begin(); (it != ite && !this->_cmdExit); ++it)
     {
         if (std::regex_match(*it, checkCmd) || std::regex_match(*it, checkCmdWithValue))
         {
-               this->_cmd.executeCommand(*this, *it);    
+            this->_cmd.executeCommand(*this, *it);
         }
     }
 
-    // std::list<IOperand *>::const_iterator it1;
-    // std::list<IOperand *>::const_iterator ite1 = this->_stack.end();
+    // std::list<IOperand const *>::const_iterator it1;
+    // std::list<IOperand const *>::const_iterator ite1 = this->_stack.end();
     // for (it1 = this->_stack.begin(); it1 != ite1; ++it1)
-    //     std::cout << *it1 << std::endl;
+    //     std::cout << *it << std::endl;
 }
 
 // void Main::outInput(void)

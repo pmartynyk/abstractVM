@@ -13,10 +13,12 @@
 
 class Main
 {
+    friend class Command;
 private:
     std::list<std::string> _input;
-    bool isExit;
-    std::list<IOperand *> _stack;
+    bool _isExit;
+    bool _cmdExit;
+    std::list<IOperand const *> _stack;
     Command _cmd;
 
     std::string ltrim(const std::string &s);

@@ -5,12 +5,14 @@ LIBS	= IOperand.hpp\
 		Main.class.hpp\
 		Exceptions.class.hpp\
 		Operand.class.hpp\
-		Command.class.hpp
+		Command.class.hpp\
+		Factory.class.hpp
 
 SRC		= main.cpp\
 		Main.class.cpp\
 		Exceptions.class.cpp\
-		Command.class.cpp
+		Command.class.cpp\
+		Factory.class.cpp
 
 OBJ		= $(SRC:.cpp=.o)
 
