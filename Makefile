@@ -24,7 +24,7 @@ $(NAME): $(OBJ)
 	clang++ -std=c++11 $(FLAG) $(OBJ) -o $(NAME) 
 
 ./%.o: ./%.cpp $(LIBS)
-	clang++ -std=c++11 $(FLAG) -c -o $@ $<
+	clang++ -std=c++11 $(FLAG) -c $< -o $@
 
 clean:
 	/bin/rm -f *.o

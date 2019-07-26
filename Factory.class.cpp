@@ -1,5 +1,5 @@
-
 #include "Factory.class.hpp"
+#include "Operand.class.hpp"
 
 Factory::Factory(void)
 {

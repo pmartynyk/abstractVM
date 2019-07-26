@@ -1,17 +1,15 @@
-
 #pragma once
 
 #include <map>
 #include <string>
 #include <limits>
 #include "IOperand.hpp"
-#include "Operand.class.hpp"
 #include "Exceptions.class.hpp"
 
 class Factory
 {
 private:
-    std::map<eOperandType, IOperand const *(Factory::*)(std::string const&) const> pointerToFunc;
+    std::map<eOperandType, IOperand const *(Factory::*)(std::string const &)const> pointerToFunc;
 
     IOperand const *createInt8(std::string const &value) const;
     IOperand const *createInt16(std::string const &value) const;

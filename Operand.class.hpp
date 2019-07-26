@@ -1,10 +1,11 @@
-
 #pragma once
 
 #include "IOperand.hpp"
 #include <typeinfo>
 #include <sstream>
 #include <string>
+#include <cmath>
+#include "Factory.class.hpp"
 
 template <typename T>
 class Operand : public IOperand
@@ -49,12 +50,12 @@ public:
         else
         {
             std::stringstream set;
-			set << this->_val;
-			set >> this->_str;
+            set << this->_val;
+            set >> this->_str;
         }
     }
     Operand(Operand const &val)
-    {  
+    {
         *this = val;
     }
     Operand &operator=(Operand const &val)
@@ -84,5 +85,75 @@ public:
     std::string const &toString(void) const
     {
         return this->_str;
+    }
+
+    IOperand const *operator+(IOperand const &rhs) const
+    {
+        eOperandType tmpType = (this->_type >= rhs.getType() ? this->_type : rhs.getType());
+
+        if (tmpType < Float)
+        {
+            return Factory().createOperand(tmpType, std::to_string(this->_val + std::stoll(rhs.toString())));
+        }
+        else
+        {
+            return Factory().createOperand(tmpType, std::to_string(this->_val + std::stold(rhs.toString())));
+        }
+    }
+
+    IOperand const *operator-(IOperand const &rhs) const
+    {
+        eOperandType tmpType = (this->_type >= rhs.getType() ? this->_type : rhs.getType());
+
+        if (tmpType < Float)
+        {
+            return Factory().createOperand(tmpType, std::to_string(this->_val - std::stoll(rhs.toString())));
+        }
+        else
+        {
+            return Factory().createOperand(tmpType, std::to_string(this->_val - std::stold(rhs.toString())));
+        }
+    }
+
+    IOperand const *operator*(IOperand const &rhs) const
+    {
+        eOperandType tmpType = (this->_type >= rhs.getType() ? this->_type : rhs.getType());
+
+        if (tmpType < Float)
+        {
+            return Factory().createOperand(tmpType, std::to_string(this->_val * std::stoll(rhs.toString())));
+        }
+        else
+        {
+            return Factory().createOperand(tmpType, std::to_string(this->_val * std::stold(rhs.toString())));
+        }
+    }
+
+    IOperand const *operator/(IOperand const &rhs) const
+    {
+        eOperandType tmpType = (this->_type >= rhs.getType() ? this->_type : rhs.getType());
+
+        if (tmpType < Float)
+        {
+            return Factory().createOperand(tmpType, std::to_string(this->_val / std::stoll(rhs.toString())));
+        }
+        else
+        {
+            return Factory().createOperand(tmpType, std::to_string(this->_val / std::stold(rhs.toString())));
+        }
+    }
+
+    IOperand const *operator%(IOperand const &rhs) const
+    {
+        eOperandType tmpType = (this->_type >= rhs.getType() ? this->_type : rhs.getType());
+
+        if (tmpType < Float)
+        {
+            return Factory().createOperand(tmpType, std::to_string(static_cast<int64_t>(this->_val) % std::stoll(rhs.toString())));
+        }
+        else
+        {
+            return Factory().createOperand(tmpType, std::to_string(fmod(this->_val, std::stold(rhs.toString()))));
+        }
     }
 };

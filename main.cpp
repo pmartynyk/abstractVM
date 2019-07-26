@@ -1,5 +1,4 @@
 #include "Main.class.hpp"
-#include "Operand.class.hpp"
 #include <iostream>
 
 int main(int ac, char **av)
