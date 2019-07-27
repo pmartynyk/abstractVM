@@ -17,7 +17,15 @@ Command::Command(void)
     this->_typeNumber.emplace(4, "double");
 
     this->_cmd.emplace("push", &Command::push);
+    this->_cmd.emplace("add", &Command::add);
+    this->_cmd.emplace("sub", &Command::sub);
+    this->_cmd.emplace("mul", &Command::mul);
+    this->_cmd.emplace("div", &Command::div);
+    this->_cmd.emplace("mod", &Command::mod);
+    this->_cmd.emplace("assert", &Command::assert);
     this->_cmd.emplace("dump", &Command::dump);
+    this->_cmd.emplace("print", &Command::print);
+    this->_cmd.emplace("pop", &Command::pop);
     this->_cmd.emplace("exit", &Command::exit);
 }
 
@@ -41,10 +49,139 @@ Command::~Command(void)
 void Command::dump(Main &main, std::string str)
 {
     (void)str;
-    std::list<IOperand const *>::const_iterator it;
-    std::list<IOperand const *>::const_iterator ite = main._stack.end();
-    for (it = main._stack.begin(); it != ite; ++it)
-        std::cout << this->_typeNumber[(*it)->getType()] << ": " << (*it)->toString() << std::endl;
+    if (main._stack.size() == 0)
+        throw Exceptions::EmptyStackError();
+    else
+    {
+        std::list<IOperand const *>::const_iterator it = main._stack.begin();
+        std::list<IOperand const *>::const_iterator ite = main._stack.end();
+        ite--;
+        std::cout << "-----------------------------------" << std::endl;
+        for (; ite != it; ite--)
+            std::cout << this->_typeNumber[(*ite)->getType()] << ": " << (*ite)->toString() << std::endl;
+        std::cout << this->_typeNumber[(*ite)->getType()] << ": " << (*ite)->toString() << std::endl;
+        std::cout << "-----------------------------------" << std::endl;
+    }
+}
+
+void Command::add(Main &main, std::string str)
+{
+    (void)str;
+    if (main._stack.size() < 2)
+        throw Exceptions::EmptyStackError();
+    else
+    {
+        this->_right = main._stack.back();
+        main._stack.pop_back();
+        this->_left = main._stack.back();
+        main._stack.pop_back();
+        main._stack.push_back(*this->_right + *this->_left);
+        delete this->_right;
+        this->_right = nullptr;
+        delete this->_left;
+        this->_left = nullptr;
+    }
+}
+
+void Command::sub(Main &main, std::string str)
+{
+    (void)str;
+    if (main._stack.size() < 2)
+        throw Exceptions::EmptyStackError();
+    else
+    {
+        this->_right = main._stack.back();
+        main._stack.pop_back();
+        this->_left = main._stack.back();
+        main._stack.pop_back();
+        main._stack.push_back(*this->_right - *this->_left);
+        delete this->_right;
+        this->_right = nullptr;
+        delete this->_left;
+        this->_left = nullptr;
+    }
+}
+
+void Command::mul(Main &main, std::string str)
+{
+    (void)str;
+    if (main._stack.size() < 2)
+        throw Exceptions::EmptyStackError();
+    else
+    {
+        this->_right = main._stack.back();
+        main._stack.pop_back();
+        this->_left = main._stack.back();
+        main._stack.pop_back();
+        main._stack.push_back(*this->_right * *this->_left);
+        delete this->_right;
+        this->_right = nullptr;
+        delete this->_left;
+        this->_left = nullptr;
+    }
+}
+
+void Command::div(Main &main, std::string str)
+{
+    (void)str;
+    if (main._stack.size() < 2)
+        throw Exceptions::EmptyStackError();
+    else
+    {
+        this->_right = main._stack.back();
+        main._stack.pop_back();
+        this->_left = main._stack.back();
+        main._stack.pop_back();
+        main._stack.push_back(*this->_right / *this->_left);
+        delete this->_right;
+        this->_right = nullptr;
+        delete this->_left;
+        this->_left = nullptr;
+    }
+}
+
+void Command::mod(Main &main, std::string str)
+{
+    (void)str;
+    if (main._stack.size() < 2)
+        throw Exceptions::EmptyStackError();
+    else
+    {
+        this->_right = main._stack.back();
+        main._stack.pop_back();
+        this->_left = main._stack.back();
+        main._stack.pop_back();
+        main._stack.push_back(*this->_right % *this->_left);
+        delete this->_right;
+        this->_right = nullptr;
+        delete this->_left;
+        this->_left = nullptr;
+    }
+}
+
+void Command::print(Main &main, std::string str)
+{
+    (void)str;
+    if (main._stack.size() == 0)
+        throw Exceptions::EmptyStackError();
+    else
+    {
+        _right = main._stack.back();
+        if (this->_right->getType() == Int8)
+        {
+            int8_t tmp = static_cast<int8_t>(std::stoi(this->_right->toString()));
+            std::cout << tmp << std::endl;
+            this->_right = nullptr;
+        }
+    }
+}
+
+void Command::pop(Main &main, std::string str)
+{
+    (void)str;
+    if (main._stack.size() == 0)
+        throw Exceptions::EmptyStackError();
+    main._stack.pop_back();
 }
 
 void Command::exit(Main &main, std::string str)
@@ -55,7 +192,6 @@ void Command::exit(Main &main, std::string str)
 
 void Command::push(Main &main, std::string str)
 {
-    // std::cout <<"Ok" <<std::endl;
     std::regex checkCmdWithValue(CMD_VAL);
     std::smatch s;
     bool found;
@@ -63,7 +199,7 @@ void Command::push(Main &main, std::string str)
     std::string val = s[3].str() + s[4].str();
     try
     {
-        main._stack.push_back(this->_fac.createOperand(this->_type[s[2]], val));
+        main._stack.push_back(Factory().createOperand(this->_type[s[2]], val));
     }
     catch (const Exceptions::OverflowError &e)
     {
@@ -73,6 +209,18 @@ void Command::push(Main &main, std::string str)
     {
         std::cerr << e.what() << '\n';
     }
+}
+
+void Command::assert(Main &main, std::string str)
+{
+    std::regex checkCmdWithValue(CMD_VAL);
+    std::smatch s;
+    bool found;
+    found = std::regex_search(str, s, checkCmdWithValue);
+    std::string val = s[3].str() + s[4].str();
+    const IOperand *check = Factory().createOperand(this->_type[s[2]], val);
+    if (*check != *main._stack.back())
+        throw Exceptions::WrongAssertError();
 }
 
 void Command::executeCommand(Main &main, std::string str)

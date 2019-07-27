@@ -51,4 +51,28 @@ public:
     ~UnderflowError(void) throw();
     const char *what(void) const throw();
 };
+
+class DivisionByZeroError : std::exception
+{
+public:
+    DivisionByZeroError(void);
+    ~DivisionByZeroError(void) throw();
+    const char *what(void) const throw();
+};
+
+class EmptyStackError : std::exception
+{
+public:
+    EmptyStackError(void);
+    ~EmptyStackError(void) throw();
+    const char *what(void) const throw();
+};
+
+class WrongAssertError : std::exception
+{
+public:
+    WrongAssertError(void);
+    ~WrongAssertError(void) throw();
+    const char *what(void) const throw();
+};
 } // namespace Exceptions

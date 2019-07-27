@@ -98,7 +98,22 @@ void Main::calculate(void)
     {
         if (std::regex_match(*it, checkCmd) || std::regex_match(*it, checkCmdWithValue))
         {
-            this->_cmd.executeCommand(*this, *it);
+            try
+            {
+                this->_cmd.executeCommand(*this, *it);
+            }
+            catch (const Exceptions::EmptyStackError &e)
+            {
+                std::cerr << e.what() << '\n';
+            }
+            catch (const Exceptions::DivisionByZeroError &e)
+            {
+                std::cerr << e.what() << '\n';
+            }
+            catch (const Exceptions::WrongAssertError &e)
+            {
+                std::cerr << e.what() << '\n';
+            }
         }
     }
 

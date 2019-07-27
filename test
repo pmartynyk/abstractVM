@@ -1,7 +1,5 @@
-push int8(1)
-push int8(10)
-push double(15.5)
-push float(15.5)
+push int8(97)
+print
 dump
 ;fdfsd
 exit

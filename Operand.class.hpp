@@ -132,28 +132,72 @@ public:
     IOperand const *operator/(IOperand const &rhs) const
     {
         eOperandType tmpType = (this->_type >= rhs.getType() ? this->_type : rhs.getType());
-
-        if (tmpType < Float)
-        {
-            return Factory().createOperand(tmpType, std::to_string(this->_val / std::stoll(rhs.toString())));
-        }
+        if (std::stold(rhs.toString()) == 0)
+            throw Exceptions::DivisionByZeroError();
         else
         {
-            return Factory().createOperand(tmpType, std::to_string(this->_val / std::stold(rhs.toString())));
+            if (tmpType < Float)
+            {
+                return Factory().createOperand(tmpType, std::to_string(this->_val / std::stoll(rhs.toString())));
+            }
+            else
+            {
+                return Factory().createOperand(tmpType, std::to_string(this->_val / std::stold(rhs.toString())));
+            }
         }
     }
 
     IOperand const *operator%(IOperand const &rhs) const
     {
         eOperandType tmpType = (this->_type >= rhs.getType() ? this->_type : rhs.getType());
+        if (std::stold(rhs.toString()) == 0)
+            throw Exceptions::DivisionByZeroError();
+        else
+        {
+            if (tmpType < Float)
+            {
+                return Factory().createOperand(tmpType, std::to_string(static_cast<int64_t>(this->_val) % std::stoll(rhs.toString())));
+            }
+            else
+            {
+                return Factory().createOperand(tmpType, std::to_string(fmod(this->_val, std::stold(rhs.toString()))));
+            }
+        }
+    }
+
+    bool operator==(IOperand const &rhs) const
+    {
+        eOperandType tmpType = (this->_type >= rhs.getType() ? this->_type : rhs.getType());
 
         if (tmpType < Float)
         {
-            return Factory().createOperand(tmpType, std::to_string(static_cast<int64_t>(this->_val) % std::stoll(rhs.toString())));
+            return static_cast<int32_t>(this->_val) == std::stoi(rhs.toString());
+        }
+        else if (tmpType == Float)
+        {
+            return static_cast<float>(this->_val) == std::stof(rhs.toString());
         }
         else
         {
-            return Factory().createOperand(tmpType, std::to_string(fmod(this->_val, std::stold(rhs.toString()))));
+            return static_cast<double>(this->_val) == std::stod(rhs.toString());
+        }
+    }
+
+    bool operator!=(IOperand const &rhs) const
+    {
+        eOperandType tmpType = (this->_type >= rhs.getType() ? this->_type : rhs.getType());
+
+        if (tmpType < Float)
+        {
+            return !(static_cast<int32_t>(this->_val) == std::stoi(rhs.toString()));
+        }
+        else if (tmpType == Float)
+        {
+            return !(static_cast<float>(this->_val) == std::stof(rhs.toString()));
+        }
+        else
+        {
+            return !(static_cast<double>(this->_val) == std::stod(rhs.toString()));
         }
     }
 };

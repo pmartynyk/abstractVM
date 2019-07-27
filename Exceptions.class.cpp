@@ -61,3 +61,43 @@ const char *Exceptions::UnderflowError::what(void) const throw()
 {
     return (this->_error.c_str());
 }
+////////////////
+Exceptions::DivisionByZeroError::DivisionByZeroError()
+{
+}
+
+Exceptions::DivisionByZeroError::~DivisionByZeroError(void) throw()
+{
+}
+
+const char *Exceptions::DivisionByZeroError::what(void) const throw()
+{
+    return ("ERROR: Division by zero.");
+}
+////////////////
+Exceptions::EmptyStackError::EmptyStackError()
+{
+}
+
+Exceptions::EmptyStackError::~EmptyStackError(void) throw()
+{
+}
+
+const char *Exceptions::EmptyStackError::what(void) const throw()
+{
+    return ("ERROR: Stack is empty.");
+}
+
+////////////////
+Exceptions::WrongAssertError::WrongAssertError()
+{
+}
+
+Exceptions::WrongAssertError::~WrongAssertError(void) throw()
+{
+}
+
+const char *Exceptions::WrongAssertError::what(void) const throw()
+{
+    return ("ERROR: An assert instruction is not true.");
+}
