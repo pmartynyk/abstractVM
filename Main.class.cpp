@@ -36,6 +36,11 @@ void Main::readFromInput(void)
         this->_input.push_back(line);
 }
 
+std::string &Main::getCurString(void)
+{
+    return this->_curString;
+}
+
 void Main::readFromFile(char *file)
 {
     std::ifstream fs;
@@ -62,13 +67,15 @@ bool Main::validateInput(void)
     std::list<std::string>::const_iterator ite = this->_input.end();
     for (it = this->_input.begin(); it != ite; ++it)
     {
-        // std::cout << *it << std::endl;
         try
         {
-            if (!std::regex_match(*it, checkCmd) &&
-                !std::regex_match(*it, checkCmdWithValue) &&
-                !std::regex_match(*it, checkComment) &&
-                !std::regex_match(*it, checkEmpty))
+            if (std::regex_match(*it, checkComment) || std::regex_match(*it, checkEmpty))
+            {
+                line++;
+                continue;
+            }
+            else if (!std::regex_match(*it, checkCmd) &&
+                     !std::regex_match(*it, checkCmdWithValue))
             {
                 res = false;
                 throw Exceptions::SyntaxError(line, *it);
@@ -100,7 +107,8 @@ void Main::calculate(void)
         {
             try
             {
-                this->_cmd.executeCommand(*this, *it);
+                this->_curString = *it;
+                Command().executeCommand(*this);
             }
             catch (const Exceptions::EmptyStackError &e)
             {
@@ -114,31 +122,30 @@ void Main::calculate(void)
             {
                 std::cerr << e.what() << '\n';
             }
+            catch (const Exceptions::TooFewElementsError &e)
+            {
+                std::cerr << e.what() << '\n';
+            }
+            catch (const Exceptions::UnderflowError &e)
+            {
+                std::cerr << e.what() << '\n';
+            }
+            catch (const Exceptions::OverflowError &e)
+            {
+                std::cerr << e.what() << '\n';
+            }
         }
     }
-
-    // std::list<IOperand const *>::const_iterator it1;
-    // std::list<IOperand const *>::const_iterator ite1 = this->_stack.end();
-    // for (it1 = this->_stack.begin(); it1 != ite1; ++it1)
-    //     std::cout << *it << std::endl;
 }
-
-// void Main::outInput(void)
-// {
-//     std::list<std::string>::const_iterator it;
-//     std::list<std::string>::const_iterator ite = this->_input.end();
-//     for (it = this->_input.begin(); it != ite; ++it)
-//         std::cout << *it << std::endl;
-// }
 
 std::string Main::ltrim(const std::string &s)
 {
-    return std::regex_replace(s, std::regex("^[[:s:]]+"), std::string(""));
+    return std::regex_replace(s, std::regex("^\\s+"), std::string(""));
 }
 
 std::string Main::rtrim(const std::string &s)
 {
-    return std::regex_replace(s, std::regex("[[:s:]]+$"), std::string(""));
+    return std::regex_replace(s, std::regex("\\s+$"), std::string(""));
 }
 
 std::string Main::trim(const std::string &s)

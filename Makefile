@@ -6,7 +6,8 @@ LIBS	= IOperand.hpp\
 		Exceptions.class.hpp\
 		Operand.class.hpp\
 		Command.class.hpp\
-		Factory.class.hpp
+		Factory.class.hpp\
+		Regular.hpp
 
 SRC		= main.cpp\
 		Main.class.cpp\

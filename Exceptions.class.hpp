@@ -75,4 +75,12 @@ public:
     ~WrongAssertError(void) throw();
     const char *what(void) const throw();
 };
+
+class TooFewElementsError : std::exception
+{
+public:
+    TooFewElementsError(void);
+    ~TooFewElementsError(void) throw();
+    const char *what(void) const throw();
+};
 } // namespace Exceptions

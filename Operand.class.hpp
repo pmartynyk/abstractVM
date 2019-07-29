@@ -1,10 +1,12 @@
 #pragma once
 
 #include "IOperand.hpp"
+#include <iostream>
 #include <typeinfo>
 #include <sstream>
 #include <string>
 #include <cmath>
+#include <iomanip>
 #include "Factory.class.hpp"
 
 template <typename T>
@@ -45,13 +47,13 @@ public:
             _precision = 14;
         }
 
-        if (this->_type != Float)
+        if (this->_type < Float)
             this->_str = std::to_string(val);
         else
         {
-            std::stringstream set;
-            set << this->_val;
-            set >> this->_str;
+            std::stringstream set(std::stringstream::out);
+            set << std::fixed << std::setprecision(this->_precision) << this->_val;
+            this->_str = set.str();
         }
     }
     Operand(Operand const &val)

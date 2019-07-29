@@ -15,12 +15,12 @@ class Main;
 class Command
 {
 private:
-    std::map<std::string, void (Command::*)(Main &, std::string)> _cmd;
+    std::map<std::string, void (Command::*)(Main &)> _cmd;
     std::map<std::string, eOperandType> _type;
     std::map<int, std::string> _typeNumber;
 
     const IOperand *_right;
-    const IOperand *_left; 
+    const IOperand *_left;
 
 public:
     Command(void);
@@ -28,17 +28,17 @@ public:
     Command &operator=(Command const &val);
     ~Command(void);
 
-    void executeCommand(Main &main, std::string str);
-    
-    void dump(Main &main, std::string str);
-    void pop(Main &main, std::string str);
-    void print(Main &main, std::string str);
-    void exit(Main &main, std::string str);
-    void push(Main &main, std::string str);
-    void assert(Main &main, std::string str);
-    void add(Main &main, std::string str);
-    void sub(Main &main, std::string str);
-    void mul(Main &main, std::string str);
-    void div(Main &main, std::string str);
-    void mod(Main &main, std::string str);
+    void executeCommand(Main &main);
+
+    void dump(Main &main);
+    void pop(Main &main);
+    void print(Main &main);
+    void exit(Main &main);
+    void push(Main &main);
+    void assert(Main &main);
+    void add(Main &main);
+    void sub(Main &main);
+    void mul(Main &main);
+    void div(Main &main);
+    void mod(Main &main);
 };

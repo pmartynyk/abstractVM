@@ -14,12 +14,13 @@
 class Main
 {
     friend class Command;
+
 private:
     std::list<std::string> _input;
     bool _isExit;
     bool _cmdExit;
     std::list<IOperand const *> _stack;
-    Command _cmd;
+    std::string _curString;
 
     std::string ltrim(const std::string &s);
     std::string rtrim(const std::string &s);
@@ -30,6 +31,8 @@ public:
     Main(Main &val);
     Main &operator=(Main const &val);
     ~Main(void);
+
+    std::string &getCurString(void);
 
     void readFromInput(void);
     void readFromFile(char *file);

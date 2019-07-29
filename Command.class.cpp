@@ -46,9 +46,8 @@ Command::~Command(void)
 {
 }
 
-void Command::dump(Main &main, std::string str)
+void Command::dump(Main &main)
 {
-    (void)str;
     if (main._stack.size() == 0)
         throw Exceptions::EmptyStackError();
     else
@@ -64,18 +63,17 @@ void Command::dump(Main &main, std::string str)
     }
 }
 
-void Command::add(Main &main, std::string str)
+void Command::add(Main &main)
 {
-    (void)str;
     if (main._stack.size() < 2)
-        throw Exceptions::EmptyStackError();
+        throw Exceptions::TooFewElementsError();
     else
     {
         this->_right = main._stack.back();
         main._stack.pop_back();
         this->_left = main._stack.back();
         main._stack.pop_back();
-        main._stack.push_back(*this->_right + *this->_left);
+        main._stack.push_back(*this->_left + *this->_right);
         delete this->_right;
         this->_right = nullptr;
         delete this->_left;
@@ -83,18 +81,17 @@ void Command::add(Main &main, std::string str)
     }
 }
 
-void Command::sub(Main &main, std::string str)
+void Command::sub(Main &main)
 {
-    (void)str;
     if (main._stack.size() < 2)
-        throw Exceptions::EmptyStackError();
+        throw Exceptions::TooFewElementsError();
     else
     {
         this->_right = main._stack.back();
         main._stack.pop_back();
         this->_left = main._stack.back();
         main._stack.pop_back();
-        main._stack.push_back(*this->_right - *this->_left);
+        main._stack.push_back(*this->_left - *this->_right);
         delete this->_right;
         this->_right = nullptr;
         delete this->_left;
@@ -102,18 +99,17 @@ void Command::sub(Main &main, std::string str)
     }
 }
 
-void Command::mul(Main &main, std::string str)
+void Command::mul(Main &main)
 {
-    (void)str;
     if (main._stack.size() < 2)
-        throw Exceptions::EmptyStackError();
+        throw Exceptions::TooFewElementsError();
     else
     {
         this->_right = main._stack.back();
         main._stack.pop_back();
         this->_left = main._stack.back();
         main._stack.pop_back();
-        main._stack.push_back(*this->_right * *this->_left);
+        main._stack.push_back(*this->_left * *this->_right);
         delete this->_right;
         this->_right = nullptr;
         delete this->_left;
@@ -121,18 +117,17 @@ void Command::mul(Main &main, std::string str)
     }
 }
 
-void Command::div(Main &main, std::string str)
+void Command::div(Main &main)
 {
-    (void)str;
     if (main._stack.size() < 2)
-        throw Exceptions::EmptyStackError();
+        throw Exceptions::TooFewElementsError();
     else
     {
         this->_right = main._stack.back();
         main._stack.pop_back();
         this->_left = main._stack.back();
         main._stack.pop_back();
-        main._stack.push_back(*this->_right / *this->_left);
+        main._stack.push_back(*this->_left / *this->_right);
         delete this->_right;
         this->_right = nullptr;
         delete this->_left;
@@ -140,18 +135,17 @@ void Command::div(Main &main, std::string str)
     }
 }
 
-void Command::mod(Main &main, std::string str)
+void Command::mod(Main &main)
 {
-    (void)str;
     if (main._stack.size() < 2)
-        throw Exceptions::EmptyStackError();
+        throw Exceptions::TooFewElementsError();
     else
     {
         this->_right = main._stack.back();
         main._stack.pop_back();
         this->_left = main._stack.back();
         main._stack.pop_back();
-        main._stack.push_back(*this->_right % *this->_left);
+        main._stack.push_back(*this->_left % *this->_right);
         delete this->_right;
         this->_right = nullptr;
         delete this->_left;
@@ -159,9 +153,8 @@ void Command::mod(Main &main, std::string str)
     }
 }
 
-void Command::print(Main &main, std::string str)
+void Command::print(Main &main)
 {
-    (void)str;
     if (main._stack.size() == 0)
         throw Exceptions::EmptyStackError();
     else
@@ -176,26 +169,24 @@ void Command::print(Main &main, std::string str)
     }
 }
 
-void Command::pop(Main &main, std::string str)
+void Command::pop(Main &main)
 {
-    (void)str;
     if (main._stack.size() == 0)
         throw Exceptions::EmptyStackError();
     main._stack.pop_back();
 }
 
-void Command::exit(Main &main, std::string str)
+void Command::exit(Main &main)
 {
-    (void)str;
     main._cmdExit = true;
 }
 
-void Command::push(Main &main, std::string str)
+void Command::push(Main &main)
 {
     std::regex checkCmdWithValue(CMD_VAL);
     std::smatch s;
     bool found;
-    found = std::regex_search(str, s, checkCmdWithValue);
+    found = std::regex_search(main.getCurString(), s, checkCmdWithValue);
     std::string val = s[3].str() + s[4].str();
     try
     {
@@ -211,33 +202,33 @@ void Command::push(Main &main, std::string str)
     }
 }
 
-void Command::assert(Main &main, std::string str)
+void Command::assert(Main &main)
 {
     std::regex checkCmdWithValue(CMD_VAL);
     std::smatch s;
     bool found;
-    found = std::regex_search(str, s, checkCmdWithValue);
+    found = std::regex_search(main.getCurString(), s, checkCmdWithValue);
     std::string val = s[3].str() + s[4].str();
     const IOperand *check = Factory().createOperand(this->_type[s[2]], val);
     if (*check != *main._stack.back())
         throw Exceptions::WrongAssertError();
 }
 
-void Command::executeCommand(Main &main, std::string str)
+void Command::executeCommand(Main &main)
 {
     std::regex checkCmd(CMD);
     std::regex checkCmdWithValue(CMD_VAL);
     std::smatch s;
     bool found;
 
-    if (std::regex_match(str, checkCmd))
+    if (std::regex_match(main.getCurString(), checkCmd))
     {
-        found = std::regex_search(str, s, checkCmd);
-        (this->*_cmd[s[1]])(main, str);
+        found = std::regex_search(main.getCurString(), s, checkCmd);
+        (this->*_cmd[s[1]])(main);
     }
-    else if (std::regex_match(str, checkCmdWithValue))
+    else if (std::regex_match(main.getCurString(), checkCmdWithValue))
     {
-        found = std::regex_search(str, s, checkCmdWithValue);
-        (this->*_cmd[s[1]])(main, str);
+        found = std::regex_search(main.getCurString(), s, checkCmdWithValue);
+        (this->*_cmd[s[1]])(main);
     }
 }
