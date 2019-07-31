@@ -77,11 +77,43 @@ bool Main::validateInput(void)
             else if (!std::regex_match(*it, checkCmd) &&
                      !std::regex_match(*it, checkCmdWithValue))
             {
+                std::regex checkCmdErr(CMDERR);
+                std::regex checkCmdErrVal(CMDERRVAL);
+                std::regex checkCmdLex(CMDLEX);
+                std::smatch s;
+                std::smatch sVal;
+                bool found;
+                bool foundVal;
+                found = std::regex_search(*it, s, checkCmdErr);
+                foundVal = std::regex_search(*it, sVal, checkCmdErrVal);
+                if (foundVal)
+                {
+                    if (!std::regex_match(sVal[1].str(), checkCmdLex))
+                    {
+                        res = false;
+                        throw Exceptions::UnknownInstructionError(sVal[1].str());
+                    }
+                }
+                else
+                {
+                    if (found)
+                    {
+                        if (!std::regex_match(s[1].str(), checkCmdLex))
+                        {
+                            res = false;
+                            throw Exceptions::UnknownInstructionError(s[1].str());
+                        }
+                    }
+                }
                 res = false;
                 throw Exceptions::SyntaxError(line, *it);
             }
         }
         catch (const Exceptions::SyntaxError &e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+        catch (const Exceptions::UnknownInstructionError &e)
         {
             std::cerr << e.what() << '\n';
         }
@@ -113,26 +145,37 @@ void Main::calculate(void)
             catch (const Exceptions::EmptyStackError &e)
             {
                 std::cerr << e.what() << '\n';
+                exit(0);
             }
             catch (const Exceptions::DivisionByZeroError &e)
             {
                 std::cerr << e.what() << '\n';
+                exit(0);
             }
             catch (const Exceptions::WrongAssertError &e)
             {
                 std::cerr << e.what() << '\n';
+                exit(0);
             }
             catch (const Exceptions::TooFewElementsError &e)
             {
                 std::cerr << e.what() << '\n';
+                exit(0);
             }
             catch (const Exceptions::UnderflowError &e)
             {
                 std::cerr << e.what() << '\n';
+                exit(0);
             }
             catch (const Exceptions::OverflowError &e)
             {
                 std::cerr << e.what() << '\n';
+                exit(0);
+            }
+            catch (const Exceptions::InvalidTypeError &e)
+            {
+                std::cerr << e.what() << '\n';
+                exit(0);
             }
         }
     }

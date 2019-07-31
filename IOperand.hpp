@@ -26,5 +26,6 @@ public:
     virtual bool operator!=(IOperand const &rhs) const = 0;
 
     virtual std::string const &toString(void) const = 0;
+    virtual std::string const &toStringOut(void) const = 0;
     virtual ~IOperand(void) {}
 };

@@ -83,4 +83,22 @@ public:
     ~TooFewElementsError(void) throw();
     const char *what(void) const throw();
 };
+
+class InvalidTypeError : std::exception
+{
+public:
+    InvalidTypeError(void);
+    ~InvalidTypeError(void) throw();
+    const char *what(void) const throw();
+};
+
+class UnknownInstructionError : std::exception
+{
+    std::string _error;
+
+public:
+    UnknownInstructionError(std::string const &str);
+    ~UnknownInstructionError(void) throw();
+    const char *what(void) const throw();
+};
 } // namespace Exceptions

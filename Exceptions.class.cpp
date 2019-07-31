@@ -102,14 +102,40 @@ const char *Exceptions::WrongAssertError::what(void) const throw()
 }
 
 Exceptions::TooFewElementsError::TooFewElementsError()
-{
-}
+{}
 
 Exceptions::TooFewElementsError::~TooFewElementsError(void) throw()
-{
-}
+{}
 
-const char *Exceptions::TooFewElementsError::what(void) const throw()
+const char* Exceptions::TooFewElementsError::what(void) const throw()
 {
     return ("ERROR: The stack is composed of strictly less that two values when an arithmetic instruction is executed.");
 }
+
+Exceptions::InvalidTypeError::InvalidTypeError()
+{
+}
+
+Exceptions::InvalidTypeError::~InvalidTypeError(void) throw()
+{
+}
+
+const char *Exceptions::InvalidTypeError::what(void) const throw()
+{
+    return ("ERROR: Invalid type for print command.");
+}
+
+Exceptions::UnknownInstructionError::UnknownInstructionError(std::string const &str)
+{
+    this->_error = "ERROR: Unknown instruction \"" + str + "\"";
+}
+
+Exceptions::UnknownInstructionError::~UnknownInstructionError(void) throw()
+{
+}
+
+const char *Exceptions::UnknownInstructionError::what(void) const throw()
+{
+    return (this->_error.c_str());
+}
+

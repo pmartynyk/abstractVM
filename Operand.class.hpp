@@ -17,6 +17,7 @@ private:
     eOperandType _type;
     size_t _precision;
     std::string _str;
+    std::string _strOut;
 
 public:
     Operand(T val) : _val(val)
@@ -48,12 +49,18 @@ public:
         }
 
         if (this->_type < Float)
+        {
             this->_str = std::to_string(val);
+            this->_strOut = std::to_string(val);
+        }
         else
         {
             std::stringstream set(std::stringstream::out);
             set << std::fixed << std::setprecision(this->_precision) << this->_val;
             this->_str = set.str();
+            std::stringstream setOut(std::stringstream::out);
+            setOut << std::fixed << std::setprecision(2) << this->_val;
+            this->_strOut = setOut.str();
         }
     }
     Operand(Operand const &val)
@@ -67,6 +74,8 @@ public:
             this->_val = val._val;
             this->_type = val._type;
             this->_precision = val._precision;
+            this->_str = val._str;
+            this->_strOut = val._strOut;
         }
         return *this;
     }
@@ -87,6 +96,10 @@ public:
     std::string const &toString(void) const
     {
         return this->_str;
+    }
+    std::string const &toStringOut(void) const
+    {
+        return this->_strOut;
     }
 
     IOperand const *operator+(IOperand const &rhs) const

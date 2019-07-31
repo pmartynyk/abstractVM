@@ -36,75 +36,137 @@ IOperand const *Factory::createOperand(eOperandType type, std::string const &val
 
 IOperand const *Factory::createInt8(std::string const &val) const
 {
-    int64_t res = std::stoll(val);
-    if (res > INT8_MAX)
+
+    try
     {
-        throw Exceptions::OverflowError("Int8");
+        int64_t res = std::stoll(val);
+        if (res > INT8_MAX)
+        {
+            throw Exceptions::OverflowError("Int8");
+        }
+        else if (res < INT8_MIN)
+        {
+            throw Exceptions::UnderflowError("Int8");
+        }
+        else
+            return new Operand<int8_t>(res);
     }
-    else if (res < INT8_MIN)
+    catch (const std::out_of_range &e)
     {
-        throw Exceptions::UnderflowError("Int8");
+        std::cerr << "ERROR: stoll is out of range" << '\n';
+        exit(0);
     }
-    else
-        return new Operand<int8_t>(res);
+    return nullptr;
 }
 
 IOperand const *Factory::createInt16(std::string const &val) const
 {
-    int64_t res = std::stoll(val);
-    if (res > INT16_MAX)
+    try
     {
-        throw Exceptions::OverflowError("Int16");
+        int64_t res = std::stoll(val);
+        if (res > INT16_MAX)
+        {
+            throw Exceptions::OverflowError("Int16");
+        }
+        else if (res < INT16_MIN)
+        {
+            throw Exceptions::UnderflowError("Int16");
+        }
+        else
+            return new Operand<int16_t>(res);
     }
-    else if (res < INT16_MIN)
+    catch (const std::out_of_range &e)
     {
-        throw Exceptions::UnderflowError("Int16");
+        std::cerr << "ERROR: stoll is out of range" << '\n';
+        exit(0);
     }
-    else
-        return new Operand<int16_t>(res);
+    return nullptr;
 }
 
 IOperand const *Factory::createInt32(std::string const &val) const
 {
-    int64_t res = std::stoll(val);
-    if (res > INT32_MAX)
+    try
     {
-        throw Exceptions::OverflowError("Int32");
+        int64_t res = std::stoll(val);
+        if (res > INT32_MAX)
+        {
+            throw Exceptions::OverflowError("Int32");
+        }
+        else if (res < INT32_MIN)
+        {
+            throw Exceptions::UnderflowError("Int32");
+        }
+        else
+            return new Operand<int32_t>(res);
     }
-    else if (res < INT32_MIN)
+    catch (const std::out_of_range &e)
     {
-        throw Exceptions::UnderflowError("Int32");
+        std::cerr << "ERROR: stoll is out of range" << '\n';
+        exit(0);
     }
-    else
-        return new Operand<int32_t>(res);
+    return nullptr;
 }
 
 IOperand const *Factory::createFloat(std::string const &val) const
 {
-    long double res = std::stold(val);
-    if (res > std::numeric_limits<float>::max())
+    try
     {
-        throw Exceptions::OverflowError("Float");
+        long double res = std::stold(val);
+        if (res > std::numeric_limits<float>::max())
+        {
+            throw Exceptions::OverflowError("Max positive Float");
+        }
+        else if (res < -std::numeric_limits<float>::max())
+        {
+            throw Exceptions::UnderflowError("Max negative Float");
+        }
+        else if (res > 0 && res < std::numeric_limits<float>::min())
+        {
+            throw Exceptions::OverflowError("Min positive Float");
+        }
+        else if (res < 0 && res > -std::numeric_limits<float>::min())
+        {
+            throw Exceptions::UnderflowError("Min negative Float");
+        }
+        else
+            return new Operand<float>(res);
     }
-    else if (res < -std::numeric_limits<float>::max())
+    catch (const std::out_of_range &e)
     {
-        throw Exceptions::UnderflowError("Float");
+        std::cerr << "ERROR: stold is out of range" << '\n';
+        exit(0);
     }
-    else
-        return new Operand<float>(res);
+    return nullptr;
 }
 
 IOperand const *Factory::createDouble(std::string const &val) const
 {
-    long double res = std::stold(val);
-    if (res > std::numeric_limits<double>::max())
+    try
     {
-        throw Exceptions::OverflowError("Double");
+        long double res = std::stold(val);
+        if (res > std::numeric_limits<double>::max())
+        {
+            throw Exceptions::OverflowError("Max positive Double");
+        }
+        else if (res < -std::numeric_limits<double>::max())
+        {
+            throw Exceptions::UnderflowError("Max negative Double");
+        }
+        else if (res > 0 && res < std::numeric_limits<double>::min())
+        {
+            throw Exceptions::UnderflowError("Min positive Double");
+        }
+        else if (res < 0 && res > -std::numeric_limits<double>::min())
+        {
+            throw Exceptions::UnderflowError("Min negative Double");
+        }
+        else
+            return new Operand<double>(res);
     }
-    else if (res < -std::numeric_limits<double>::max())
+    catch (const std::out_of_range &e)
     {
-        throw Exceptions::UnderflowError("Double");
+        std::cerr << "ERROR: stold is out of range" << '\n';
+        exit(0);
     }
-    else
-        return new Operand<double>(res);
+    return nullptr;
 }

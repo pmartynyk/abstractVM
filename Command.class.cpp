@@ -55,11 +55,14 @@ void Command::dump(Main &main)
         std::list<IOperand const *>::const_iterator it = main._stack.begin();
         std::list<IOperand const *>::const_iterator ite = main._stack.end();
         ite--;
-        std::cout << "-----------------------------------" << std::endl;
+        std::cout << "-----------top----------" << std::endl;
         for (; ite != it; ite--)
-            std::cout << this->_typeNumber[(*ite)->getType()] << ": " << (*ite)->toString() << std::endl;
-        std::cout << this->_typeNumber[(*ite)->getType()] << ": " << (*ite)->toString() << std::endl;
-        std::cout << "-----------------------------------" << std::endl;
+            std::cout << this->_typeNumber[(*ite)->getType()] << ": "
+                      << "\033[32m" << (*ite)->toStringOut() << "\33[0m" << std::endl;
+        std::cout << this->_typeNumber[(*ite)->getType()] << ": "
+                  << "\033[32m" << (*ite)->toStringOut() << "\33[0m" << std::endl;
+
+        std::cout << "-----------end----------" << std::endl;
     }
 }
 
@@ -166,6 +169,10 @@ void Command::print(Main &main)
             std::cout << tmp << std::endl;
             this->_right = nullptr;
         }
+        else
+        {
+            throw Exceptions::InvalidTypeError();
+        }
     }
 }
 
@@ -188,18 +195,7 @@ void Command::push(Main &main)
     bool found;
     found = std::regex_search(main.getCurString(), s, checkCmdWithValue);
     std::string val = s[3].str() + s[4].str();
-    try
-    {
-        main._stack.push_back(Factory().createOperand(this->_type[s[2]], val));
-    }
-    catch (const Exceptions::OverflowError &e)
-    {
-        std::cerr << e.what() << '\n';
-    }
-    catch (const Exceptions::UnderflowError &e)
-    {
-        std::cerr << e.what() << '\n';
-    }
+    main._stack.push_back(Factory().createOperand(this->_type[s[2]], val));
 }
 
 void Command::assert(Main &main)
